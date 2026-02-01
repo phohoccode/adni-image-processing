@@ -143,12 +143,23 @@ class ADNIProcessorGUI:
                                        font=("Arial", 9), width=12)
         self.btn_clear_log.pack(side="right")
         
+        # Progress bar với label % - ĐẶT TRƯỚC LOG
+        progress_container = tk.Frame(prog_frame, bg="#f0f0f0", relief="solid", borderwidth=1)
+        progress_container.pack(fill="x", pady=(0, 10), padx=5)
+        
+        tk.Label(progress_container, text="Tiến trình:", font=("Arial", 9, "bold"), 
+                bg="#f0f0f0").pack(side="left", padx=5)
+        
+        self.progress = ttk.Progressbar(progress_container, mode="indeterminate", length=300)
+        self.progress.pack(side="left", fill="x", expand=True, pady=8, padx=5)
+        
+        self.progress_label = tk.Label(progress_container, text="", width=6, 
+                                       font=("Arial", 12, "bold"), fg="#2196F3", bg="#f0f0f0")
+        self.progress_label.pack(side="left", padx=5)
+        
         self.log_text = scrolledtext.ScrolledText(prog_frame, height=20, wrap=tk.WORD, 
                                                   font=("Consolas", 9), state="disabled")
         self.log_text.pack(fill="both", expand=True)
-        
-        self.progress = ttk.Progressbar(prog_frame, mode="indeterminate")
-        self.progress.pack(fill="x", pady=5)
         
         # Status Bar
         self.status_label = tk.Label(self.root, text="Sẵn sàng", 
@@ -321,6 +332,7 @@ class ADNIProcessorGUI:
                     current += 1
                     progress_pct = int((current / total) * 100)
                     self.progress['value'] = progress_pct
+                    self.progress_label.config(text=f"{progress_pct}%")
                     self.status_label.config(text=f"Loại bỏ sọ... {current}/{total} ({progress_pct}%)")
                     self.root.update()
                     
@@ -389,6 +401,7 @@ class ADNIProcessorGUI:
             finally:
                 if standalone:
                     self.progress['value'] = 0
+                    self.progress_label.config(text="")
                     self.status_label.config(text="Sẵn sàng")
                     self.is_running = False
                     self.set_buttons_state(tk.NORMAL)
@@ -426,7 +439,7 @@ class ADNIProcessorGUI:
                 os.makedirs(self.dataset_2d_dir.get(), exist_ok=True)
                 
                 OUT_SIZE = 128
-                NUM_SLICES = 11  # số slice / subject (nên lẻ)
+                NUM_SLICES = 5  # số slice / subject (nên lẻ)
                 
                 processed = 0
                 skipped = 0
