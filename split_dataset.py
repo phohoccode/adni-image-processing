@@ -11,7 +11,8 @@ def split_dataset_by_subject(
     train_ratio=0.70,
     val_ratio=0.15,
     test_ratio=0.15,
-    random_seed=42
+    random_seed=42,
+    selected_labels=None
 ):
     """
     Chia dữ liệu theo subject-level split.
@@ -23,6 +24,7 @@ def split_dataset_by_subject(
         val_ratio: Tỷ lệ tập validation (0.15 = 15%)
         test_ratio: Tỷ lệ tập test (0.15 = 15%)
         random_seed: Seed cho random để đảm bảo reproducibility
+        selected_labels: List các label cần split, nếu None thì split tất cả
     """
     
     # Kiểm tra tỷ lệ
@@ -40,8 +42,14 @@ def split_dataset_by_subject(
     print(f"Random seed: {random_seed}")
     print("=" * 70)
     
-    # Danh sách các nhãn (labels)
-    labels = ["CN", "MCI", "Dementia"]
+    # Danh sách các nhãn (labels) - sử dụng selected_labels nếu có
+    if selected_labels:
+        labels = selected_labels
+        print(f"Chỉ split các label: {', '.join(labels)}")
+    else:
+        labels = ["CN", "EMCI", "LMCI", "SMC", "AD"]
+        print("Split tất cả các label")
+    print("=" * 70)
     
     # Kiểm tra thư mục nguồn
     if not os.path.exists(source_dir):

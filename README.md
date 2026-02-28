@@ -7,6 +7,7 @@ Dự án này xử lý dữ liệu hình ảnh não từ bộ dữ liệu ADNI (
 Hệ thống bao gồm các công cụ để:
 
 - Loại bỏ sọ não (skull stripping) từ ảnh MRI
+- Đăng ký về không gian MNI chuẩn (MNI registration)
 - Chuyển đổi dữ liệu 3D sang 2D
 - Gán nhãn dữ liệu dựa trên chẩn đoán
 - Giao diện đồ họa (GUI) để quản lý toàn bộ quy trình
@@ -16,12 +17,16 @@ Hệ thống bao gồm các công cụ để:
 ```
 code/
 ├── skull stripping.py      # Loại bỏ sọ não từ ảnh MRI
+├── mni_registration.py     # Đăng ký về không gian MNI152 chuẩn
 ├── make_2d_dataset.py      # Chuyển đổi ảnh 3D sang 2D
 ├── assign_labels.py        # Gán nhãn cho dữ liệu
+├── split_dataset.py        # Chia dữ liệu train/val/test
 ├── gui_process.py          # Giao diện đồ họa
 ├── skull_stripped/         # Thư mục chứa ảnh đã loại sọ
+├── mni_registered/         # Thư mục chứa ảnh đã registration
 ├── dataset_2d/             # Thư mục chứa dữ liệu 2D
-└── dataset_labeled/        # Thư mục chứa dữ liệu đã gán nhãn
+├── dataset_labeled/        # Thư mục chứa dữ liệu đã gán nhãn
+└── dataset_split/          # Thư mục chứa dữ liệu đã chia
 ```
 
 ## Yêu cầu hệ thống
@@ -69,16 +74,30 @@ Trong giao diện, bạn có thể:
 python "skull stripping.py"
 ```
 
-#### Bước 2: Chuyển đổi sang 2D
+#### Bước 2: Đăng ký về không gian MNI
+
+```bash
+python mni_registration.py
+```
+
+**Lưu ý**: Bước này yêu cầu FSL đã được cài đặt và thêm vào PATH
+
+#### Bước 3: Chuyển đổi sang 2D
 
 ```bash
 python make_2d_dataset.py
 ```
 
-#### Bước 3: Gán nhãn
+#### Bước 4: Gán nhãn
 
 ```bash
 python assign_labels.py
+```
+
+#### Bước 5: Chia dữ liệu
+
+```bash
+python split_dataset.py
 ```
 
 ## Cấu hình

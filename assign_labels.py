@@ -6,7 +6,7 @@ import pandas as pd # Đọc và xử lý file CSV
 # ============ CẤU HÌNH ============
 # Thư mục chứa dataset 2D đã tạo từ bước trước (các slice PNG)
 DATASET_2D = r"D:\KhoaLuanTotNghiep\code\dataset_2d"
-# File CSV chứa thông tin nhãn (DX: diagnosis) của các subject
+# File CSV chứa thông tin nhãn (DX_bl: diagnosis at baseline) của các subject
 CSV_PATH   = r"D:\KhoaLuanTotNghiep\ADNIMERGE_30Jan2026.csv"
 # Thư mục output để lưu dataset đã được gán nhãn (phân theo class)
 OUT_DIR    = r"D:\KhoaLuanTotNghiep\code\dataset_labeled"
@@ -15,11 +15,11 @@ OUT_DIR    = r"D:\KhoaLuanTotNghiep\code\dataset_labeled"
 
 def load_label_map(csv_path):
     """
-    Load label map từ CSV file và tạo dictionary ánh xạ PTID -> DX.
+    Load label map từ CSV file và tạo dictionary ánh xạ PTID -> DX_bl.
     
     Quy trình:
     1. Đọc CSV file
-    2. Lọc chỉ lấy cột PTID và DX
+    2. Lọc chỉ lấy cột PTID và DX_bl (Diagnosis at Baseline)
     3. Loại bỏ các dòng có giá trị null
     4. Loại bỏ các PTID trùng lặp (giữ lại dòng đầu tiên)
     5. Tạo dictionary mapping
@@ -28,16 +28,16 @@ def load_label_map(csv_path):
         csv_path: Đường dẫn đến CSV chứa thông tin label
     
     Returns:
-        dict: {PTID: DX_label} - Dictionary ánh xạ subject ID sang nhãn chẩn đoán
+        dict: {PTID: DX_bl_label} - Dictionary ánh xạ subject ID sang nhãn chẩn đoán ban đầu
     """
     # Đọc file CSV
     df = pd.read_csv(csv_path)
-    # Chỉ lấy 2 cột PTID (Patient ID) và DX (Diagnosis), loại bỏ các dòng có giá trị null
-    df = df[["PTID", "DX"]].dropna()
+    # Chỉ lấy 2 cột PTID (Patient ID) và DX_bl (Diagnosis at Baseline), loại bỏ các dòng có giá trị null
+    df = df[["PTID", "DX_bl"]].dropna()
     # Loại bỏ các PTID trùng lặp, chỉ giữ lại lần xuất hiện đầu tiên
     df = df.drop_duplicates("PTID")
-    # Tạo dictionary từ 2 cột PTID và DX
-    return dict(zip(df.PTID, df.DX))
+    # Tạo dictionary từ 2 cột PTID và DX_bl
+    return dict(zip(df.PTID, df.DX_bl))
 
 
 def assign_labels_for_subject(subject_dir, subject_name, label, output_dir, log_callback=None):
@@ -115,7 +115,7 @@ if __name__ == "__main__":
             print(f"[SKIP] Không có label: {subj}")
             continue
 
-        # Lấy label (DX) của subject từ label map
+        # Lấy label (DX_bl) của subject từ label map
         label = label_map[subj]
         # Copy các slice của subject vào thư mục label tương ứng
         slice_count = assign_labels_for_subject(subj_dir, subj, label, OUT_DIR, print)
